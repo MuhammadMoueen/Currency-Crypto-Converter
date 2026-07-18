@@ -80,12 +80,16 @@ export function showToast(message, type = "success") {
     }
 
     toast.textContent = message;
+    toast.style.display = "inline-block";
     requestAnimationFrame(() => toast.classList.add("show"));
 
     clearTimeout(showToast.timeoutId);
     showToast.timeoutId = setTimeout(() => {
         toast.classList.remove("show");
-    }, type === "error" ? 2000 : 1000);
+        requestAnimationFrame(() => {
+            toast.style.display = "none";
+        });
+    }, type === "error" ? 2200 : 2000);
 }
 
 export function showResult(text) {

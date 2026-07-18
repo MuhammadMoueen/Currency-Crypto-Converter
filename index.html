@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DK&SM Currency & Crypto Converter</title>
+    <link rel="icon" href="assets/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DK&SM Currency & Crypto Converter</h1>
+
+        <div class="mode-toggle">
+            <button type="button" class="mode-btn active" data-mode="currency">🌍 Currency</button>
+            <button type="button" class="mode-btn" data-mode="crypto">₿ Crypto</button>
+        </div>
+
+        <div class="amount-container">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" placeholder="Enter Amount">
+        </div>
+
+        <div class="dropdown-container">
+            <div class="from">
+                <label for="fromCurrency">From</label>
+                <div class="select-container">
+                    <img src="" alt="From Icon" id="fromFlag">
+                    <select id="fromCurrency"></select>
+                </div>
+            </div>
+
+            <div class="to">
+                <label for="toCurrency">To</label>
+                <div class="select-container">
+                    <img src="" alt="To Icon" id="toFlag">
+                    <select id="toCurrency"></select>
+                </div>
+            </div>
+        </div>
+
+        <button id="convertBtn">Convert</button>
+
+        <div class="result">
+            <p id="resultText">Enter amount and click Convert</p>
+            <p class="last-updated" id="lastUpdated">Last Updated: --</p>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+/* ==========================================================================
+   Currency Converter — "Vault Exchange" 3D theme
+   A brass-and-steel exchange-counter feel: panels read as machined metal
+   plates with real thickness, the Convert button reads as a pressable coin.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Color */
+    --bg-void: #0a1420;
+    --bg-vault: #0f1e30;
+    --panel: #1c3153;
+    --panel-edge: #0d1c30;
+    --panel-highlight: #2c4972;
+    --brass: #c9a227;
+    --brass-light: #f0d580;
+    --brass-dark: #7a5e12;
+    --text-light: #eef3f8;
+    --text-muted: #86a0bc;
+    --result-ink: #dff3ea;
+    --result-accent: #5fbf95;
+
+    /* Type */
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+
+    /* Layout */
+    --radius: 18px;
+    --plate-thickness: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px 220px;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(44, 73, 114, 0.35), transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(201, 162, 39, 0.08), transparent 45%),
+        var(--bg-void);
+    font-family: var(--font-body);
+    color: var(--text-light);
+    perspective: 1400px;
+}
+
+/* Faint engraved guilloché-style backdrop lines, like a banknote plate */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: repeating-linear-gradient(
+        45deg,
+        var(--brass) 0px,
+        var(--brass) 1px,
+        transparent 1px,
+        transparent 14px
+    );
+}
+
+/* ==========================================================================
+   The Panel — machined metal plate with real extrusion
+   ========================================================================== */
+
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(160deg, var(--panel), var(--panel-edge) 85%);
+    border-radius: var(--radius);
+    padding: 40px 32px 32px;
+    transform-style: preserve-3d;
+    transform: rotateX(4deg) rotateY(-3deg);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: visible;
+
+    /* Layered shadows fake real plate thickness + drop shadow onto the vault */
+    box-shadow:
+        0 1px 0 var(--panel-highlight) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.4) inset,
+        0 2px 0 var(--panel-edge),
+        0 4px 0 var(--panel-edge),
+        0 6px 0 var(--panel-edge),
+        0 8px 0 var(--panel-edge),
+        0 8px 24px rgba(0, 0, 0, 0.55),
+        0 30px 60px -20px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(201, 162, 39, 0.18);
+}
+
+.container:hover {
+    transform: rotateX(1deg) rotateY(-1deg) translateY(-2px);
+}
+
+/* Brass corner rivets — the signature detail */
+.container::before,
+.container::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    top: 14px;
+    background: radial-gradient(circle at 35% 30%, var(--brass-light), var(--brass) 55%, var(--brass-dark) 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+.container::before { left: 14px; }
+.container::after { right: 14px; }
+
+h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.65rem;
+    letter-spacing: 0.01em;
+    text-align: center;
+    margin: 0 0 18px;
+    color: var(--brass-light);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 2px 8px rgba(201, 162, 39, 0.25);
+}
+
+.mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.mode-btn {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    color: var(--text-light);
+    font-family: var(--font-body);
+    font-weight: 700;
+    padding: 14px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.mode-btn.active {
+    background: linear-gradient(180deg, rgba(201, 162, 39, 0.16), rgba(201, 162, 39, 0.1));
+    border-color: rgba(201, 162, 39, 0.45);
+    color: #fff;
+}
+
+.mode-btn:hover {
+    transform: translateY(-1px);
+}
+
+label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   Engraved inputs — recessed into the plate, not raised
+   ========================================================================== */
+
+.amount-container {
+    margin-bottom: 24px;
+}
+
+input#amount,
+select {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-light);
+    background: var(--bg-vault);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 13px 14px;
+    outline: none;
+    appearance: none;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+        0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+input#amount::placeholder {
+    color: var(--text-muted);
+}
+
+input#amount:focus-visible,
+select:focus-visible {
+    border-color: var(--brass);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.6),
+        0 0 0 3px rgba(201, 162, 39, 0.3);
+}
+
+.dropdown-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.select-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    z-index: 3;
+}
+
+.select-container select {
+    padding-left: 40px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.select-container select::-ms-expand {
+    display: none;
+}
+
+/* Custom dropdown arrow, brass-tinted */
+.select-container::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--brass);
+    border-bottom: 2px solid var(--brass);
+    transform: translateY(-65%) rotate(45deg);
+    pointer-events: none;
+}
+
+.select-container img {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--bg-vault), 0 0 0 3px rgba(201, 162, 39, 0.4);
+    z-index: 2;
+}
+
+/* ==========================================================================
+   Convert button — a pressable brass coin/token
+   ========================================================================== */
+
+#convertBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #241a02;
+    background: linear-gradient(180deg, var(--brass-light), var(--brass) 55%, var(--brass-dark));
+    border: none;
+    border-radius: 12px;
+    padding: 15px 20px;
+    cursor: pointer;
+    position: relative;
+    transform: translateY(0);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.5) inset,
+        0 3px 0 var(--brass-dark),
+        0 5px 0 var(--brass-dark),
+        0 6px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.16s cubic-bezier(.2,.8,.2,1), box-shadow 0.16s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+#convertBtn:hover {
+    filter: brightness(1.06);
+}
+
+#convertBtn:active {
+    transform: translateY(4px) scale(0.99);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.5) inset,
+        0 1px 0 var(--brass-dark),
+        0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#convertBtn:focus-visible {
+    outline: 2px solid var(--brass-light);
+    outline-offset: 3px;
+}
+
+#convertBtn.is-loading {
+    opacity: 0.95;
+    cursor: wait;
+    pointer-events: none;
+}
+
+#convertBtn .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(36, 26, 2, 0.25);
+    border-top-color: #241a02;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Result — a printed receipt resting beneath the panel
+   ========================================================================== */
+
+.result {
+    margin-top: 26px;
+    background: var(--bg-vault);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px dashed rgba(201, 162, 39, 0.3);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease;
+}
+
+.result.is-pop {
+    transform: scale(1.015);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+#resultText {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--result-ink);
+    line-height: 1.4;
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(18px);
+    background: rgba(12, 20, 30, 0.95);
+    color: var(--text-light);
+    padding: 12px 16px;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 0.28s ease, transform 0.28s cubic-bezier(.2,.8,.2,1);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+    background: rgba(22, 70, 46, 0.95);
+}
+
+.toast.error {
+    background: rgba(92, 24, 24, 0.95);
+}
+
+/* ==========================================================================
+   Responsive + accessibility
+   ========================================================================== */
+
+@media (max-width: 960px) {
+    body {
+        padding: 24px 16px 100px;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 32px 22px 26px;
+        transform: none;
+    }
+
+    .container:hover {
+        transform: none;
+    }
+
+    .mode-toggle {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .amount-container,
+    .dropdown-container,
+    .result {
+        margin-bottom: 20px;
+    }
+
+    .dropdown-container {
+        grid-template-columns: 1fr;
+    }
+
+    .select-container {
+        min-width: 0;
+    }
+
+    .select-container select {
+        padding: 12px 14px 12px 42px;
+        font-size: 0.95rem;
+    }
+
+    #convertBtn {
+        padding: 14px 16px;
+        font-size: 0.92rem;
+    }
+
+    .result {
+        padding: 16px 14px;
+    }
+
+    .toast {
+        left: 50%;
+        right: auto;
+        width: auto;
+        max-width: calc(100% - 32px);
+        padding: 12px 14px;
+        bottom: 16px;
+    }
+}
+
+@media (max-width: 520px) {
+    .mode-toggle {
+        grid-template-columns: 1fr;
+    }
+
+    .mode-btn {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 1.35rem;
+    }
+
+    .amount-container,
+    .dropdown-container,
+    .result {
+        margin-bottom: 18px;
+    }
+
+    .dropdown-container {
+        gap: 14px;
+    }
+
+    .select-container select {
+        padding-left: 42px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .container,
+    #convertBtn {
+        transition: none;
+    }
+}
+
+.title {
+    text-align: center;
+    color: var(--text-light);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 24px;
+}

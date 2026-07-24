@@ -8,9 +8,6 @@ This app converts between fiat currencies and cryptocurrencies in a sleek UI. It
 
 ## Key Features
 
-
-vif6767ii
-
 - Toggle between fiat currency mode and cryptocurrency mode
 - Convert between fiat currencies like USD, PKR, EUR, GBP, INR, JPY, and more
 - Convert between cryptocurrencies and fiat currencies

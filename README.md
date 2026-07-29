@@ -1,5 +1,5 @@
 ﻿# Currency & Crypto Converter 
-qq
+
 A polished currency and cryptocurrency converter built with plain HTML, CSS, and JavaScript.
 
 ## Project Overview

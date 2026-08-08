@@ -1,4 +1,4 @@
-﻿# Currency & Crypto Converter
+﻿# Currency & Crypto Converter1
 
 A polished currency and cryptocurrency converter built with plain HTML, CSS, and JavaScript.
 

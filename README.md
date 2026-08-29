@@ -3,6 +3,7 @@
 A polished currency and cryptocurrency converter built with plain HTML, CSS, and JavaScript.
 
 
+
 ## Project Overview
 This app converts between fiat currencies and cryptocurrencies in a sleek UI. It uses live rate APIs and fallback logic so it still works when network requests fail.
 
